@@ -79,12 +79,12 @@ function Home() {
       .doc("test")
       .onSnapshot((documentSnapshot) => {
         console.log("documentSnapshot metadata:", documentSnapshot.metadata);
-        setDoc(documentSnapshot);
+        setDoc(documentSnapshot.data());
       });
     const cleanCollectionSnapshot = fuego.db.collection("test").onSnapshot(
       (querySnapshot) => {
         console.log("collectionSnapshot metadata:", querySnapshot.metadata);
-        setCollection(querySnapshot);
+        setCollection(querySnapshot.docs.map((doc) => doc.data()));
       },
       (error) => null
     );
@@ -103,7 +103,19 @@ function Home() {
   console.log(swrDoc);
   console.log("swr collection:");
   console.log(swrCollection);
-  return <h2>Firestore Data Route</h2>;
+  return (
+    <div>
+      <h2>Firestore Data Route</h2>
+      firestore doc:
+      <pre>{JSON.stringify(doc)}</pre>
+      firestore collection:
+      <pre>{JSON.stringify(collection)}</pre>
+      swr doc:
+      <pre>{JSON.stringify(swrDoc)}</pre>
+      swr collection:
+      <pre>{JSON.stringify(swrCollection)}</pre>
+    </div>
+  );
 }
 
 function About() {
