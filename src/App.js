@@ -38,25 +38,17 @@ export default function App() {
           <nav>
             <ul>
               <li>
-                <Link to="/">Home</Link>
+                <Link to="/">Firestore Data Route</Link>
               </li>
               <li>
-                <Link to="/about">About</Link>
-              </li>
-              <li>
-                <Link to="/users">Users</Link>
+                <Link to="/about">No Data</Link>
               </li>
             </ul>
           </nav>
 
-          {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
           <Switch>
             <Route path="/about">
               <About />
-            </Route>
-            <Route path="/users">
-              <Users />
             </Route>
             <Route path="/">
               <Home />
@@ -82,18 +74,6 @@ function Home() {
   console.log(`RENDER LOOP #${i++}`);
   // standard firestore
   useEffect(() => {
-    /*
-    const getDoc = async () => {
-      const docSnapshot = await fuego.db.collection("test").doc("test").get();
-      //console.log("documentGet metadata:", docSnapshot.metadata);
-      setDoc(docSnapshot);
-    };
-    const getCollection = async () => {
-      const collectionSnapshot = await fuego.db.collection("test").get();
-      //console.log("collectionGet metadata:", collectionSnapshot.metadata);
-      setDoc(collectionSnapshot);
-    };
-    */
     const cleanDocumentSnapshot = fuego.db
       .collection("test")
       .doc("test")
@@ -108,8 +88,6 @@ function Home() {
       },
       (error) => null
     );
-    //getDoc(); // needs no cleanup
-    //getCollection();
 
     return () => {
       cleanDocumentSnapshot();
@@ -125,14 +103,10 @@ function Home() {
   console.log(swrDoc);
   console.log("swr collection:");
   console.log(swrCollection);
-  return <h2>Home</h2>;
+  return <h2>Firestore Data Route</h2>;
 }
 
 function About() {
   i = 0;
-  return <h2>About</h2>;
-}
-
-function Users() {
-  return <h2>Users</h2>;
+  return <h2>NO data</h2>;
 }
