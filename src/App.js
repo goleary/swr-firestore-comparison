@@ -68,9 +68,10 @@ function Home() {
   const { data: swrDoc, update: updateDoc } = useDocument(`test/test`, {
     listen: true,
   });
-  const { data: swrCollection, update: updateCollection } = useCollection(
-    `test`
-  );
+  const {
+    data: swrCollection,
+    update: updateCollection,
+  } = useCollection(`test`, { listen: true }); //listening results in faster data acess because it use local firestore cache
   console.log(`RENDER LOOP #${i++}`);
   // standard firestore
   useEffect(() => {
