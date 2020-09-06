@@ -61,26 +61,27 @@ export default function App() {
 }
 
 let i = 0;
-
+const collectionPath = "test";
+const docPath = `${collectionPath}/test`;
 function Home() {
-  const [doc, setDoc] = useState(null);
-  const [collection, setCollection] = useState(null);
-  const { data: swrDoc, update: updateDoc } = useDocument(`test/test`, {
+  console.log(`RENDER LOOP #${i++}`);
+  const { data: swrDoc, update: updateDoc } = useDocument(docPath, {
     listen: true,
   });
   const {
     data: swrCollection,
-    update: updateCollection,
-  } = useCollection(`test`, { listen: true }); //listening results in faster data acess because it use local firestore cache
-  console.log(`RENDER LOOP #${i++}`);
+    add: addDocumentSWR,
+  } = useCollection(collectionPath, { listen: true }); //listening results in faster data acess because it use local firestore cache
+
   // standard firestore
+  const [doc, setDoc] = useState(null);
+  const [collection, setCollection] = useState(null);
   useEffect(() => {
     const cleanDocumentSnapshot = fuego.db
-      .collection("test")
-      .doc("test")
+      .doc(docPath)
       .onSnapshot((documentSnapshot) => {
         console.log("documentSnapshot metadata:", documentSnapshot.metadata);
-        setDoc(documentSnapshot.data());
+        setDoc(documentSnapshot);
       });
     const cleanCollectionSnapshot = fuego.db.collection("test").onSnapshot(
       (querySnapshot) => {
@@ -95,8 +96,19 @@ function Home() {
       cleanCollectionSnapshot();
     };
   }, []);
+
+  const updateDocFirestore = () => {
+    doc.ref.set({ time: Date.now() }, { merge: true });
+  };
+
+  const addDocFirestore = () => {
+    fuego.db
+      .collection(collectionPath)
+      .add({ type: "firestore", time: Date.now() });
+  };
+
   console.log("firestore doc:");
-  console.log(doc);
+  console.log(doc && doc.data());
   console.log("firestore collection:");
   console.log(collection);
 
@@ -108,13 +120,27 @@ function Home() {
     <div>
       <h2>Firestore Data Route</h2>
       firestore doc:
-      <pre>{JSON.stringify(doc)}</pre>
+      <pre>{JSON.stringify(doc && doc.data())}</pre>
       firestore collection:
+      {collection && collection.length}
       <pre>{JSON.stringify(collection)}</pre>
       swr doc:
       <pre>{JSON.stringify(swrDoc)}</pre>
       swr collection:
+      {swrCollection && swrCollection.length}
       <pre>{JSON.stringify(swrCollection)}</pre>
+      <div>
+        <button onClick={updateDocFirestore}>update document</button>
+        <button onClick={() => updateDoc({ time: Date.now() })}>
+          update document swr
+        </button>
+        <button onClick={addDocFirestore}>add document</button>
+        <button
+          onClick={() => addDocumentSWR({ test: "hi", time: Date.now() })}
+        >
+          add document swr
+        </button>
+      </div>
     </div>
   );
 }
